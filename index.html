@@ -70,10 +70,13 @@
             .input-group {
                 flex-direction: column; 
                 align-items: stretch; 
+                /* Remove the 15px horizontal gap when stacking vertically */
+                gap: 0; 
             }
             .input-group label {
                 flex: none; 
-                margin-bottom: 8px; 
+                /* Reduced margin to bring the input closer to the label */
+                margin-bottom: 4px; 
             }
             .input-group input, .input-group select {
                 flex: none; 
