@@ -498,7 +498,7 @@
                         <tr>
                             <th>Period</th>
                             <th>Stock Price (EOP)</th> 
-                            <th>Annual Dividend/Share (Yield)</th>
+                            <th>Annual Net Dividend (Yield)</th>
                             <th>Starting Shares</th>
                             <th>Gross Dividend Earned</th>
                             <th>Tax Paid</th>
@@ -513,13 +513,18 @@
 
             aggregatedData.forEach(data => {
                 const stockPriceFormatted = data.stockPrice.toLocaleString('en-US', currencyOptionsFractional);
-                const annualDividendPerShareFormatted = data.annualDividendPerShare.toLocaleString('en-US', currencyOptionsFractional);
+                
+                // Calculate Net Dividend and Net Yield
+                const netAnnualDividendPerShare = data.annualDividendPerShare * netDividendMultiplier;
+                const netAnnualDividendPerShareFormatted = netAnnualDividendPerShare.toLocaleString('en-US', currencyOptionsFractional);
+
+                const netAnnualYield = data.stockPrice > 0 ? (netAnnualDividendPerShare / data.stockPrice) * 100 : 0;
+                
                 const grossDividendsFormatted = data.grossDividends.toLocaleString('en-US', currencyOptionsWhole);
                 const taxesPaidFormatted = data.taxesPaid.toLocaleString('en-US', currencyOptionsWhole);
                 const netDividendsFormatted = data.netDividends.toLocaleString('en-US', currencyOptionsWhole);
                 const endingValueFormatted = data.endingValue.toLocaleString('en-US', currencyOptionsWhole);
 
-                const annualYield = data.stockPrice > 0 ? (data.annualDividendPerShare / data.stockPrice) * 100 : 0;
                 const startingSharesFormatted = Math.round(data.startingShares).toLocaleString('en-US', { maximumFractionDigits: 0 });
                 const sharesPurchasedFormatted = Math.round(data.sharesPurchased).toLocaleString('en-US', { maximumFractionDigits: 0 });
                 const endingSharesFormatted = Math.round(data.endingShares).toLocaleString('en-US', { maximumFractionDigits: 0 });
@@ -529,8 +534,8 @@
                         <td>${data.label}</td>
                         <td>${stockPriceFormatted}</td>
                         <td class="dividend-cell">
-                            <strong>${annualDividendPerShareFormatted}</strong><br>
-                            (${annualYield.toFixed(2)}%)
+                            <strong>${netAnnualDividendPerShareFormatted}</strong><br>
+                            (${netAnnualYield.toFixed(2)}%)
                         </td>
                         <td>${startingSharesFormatted}</td>
                         <td>${grossDividendsFormatted}</td>
