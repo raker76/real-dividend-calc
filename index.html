@@ -30,28 +30,55 @@
             font-size: 2rem;
             margin-bottom: 24px;
         }
+        
+        /* --- Input Group Styling --- */
         .input-group {
             margin-bottom: 16px;
+            display: flex; /* Use flex to put label and input side-by-side */
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
         }
         label {
-            display: block;
-            margin-bottom: 8px;
+            /* Now acting as the left item in the flex container */
+            display: block; 
+            margin-bottom: 0; /* Remove block margin */
             font-weight: 600;
             color: #4a5568;
+            flex: 0 0 50%; /* Gives label about half the space on desktop */
+            text-align: left;
         }
         input[type="number"], select {
-            width: 100%;
+            /* Now acting as the right item in the flex container */
+            flex: 1 1 50%; /* Takes remaining space */
             padding: 10px 12px;
             border: 1px solid #cbd5e0;
             border-radius: 6px;
             box-sizing: border-box;
-            transition: border-color 0.2s;
+            transition: border-color 0.2s, box-shadow 0.2s;
         }
         input[type="number"]:focus, select:focus {
             outline: none;
             border-color: #4c51bf;
             box-shadow: 0 0 0 2px rgba(76, 81, 191, 0.2);
         }
+        
+        /* Responsive adjustment for input-group: Stack on small screens */
+        @media (max-width: 550px) {
+            .input-group {
+                flex-direction: column; /* Stack vertically on small screens */
+                align-items: stretch; /* Stretch items to full width */
+            }
+            .input-group label {
+                flex: none; 
+                margin-bottom: 8px; /* Restore bottom margin for stacking */
+            }
+            .input-group input, .input-group select {
+                flex: none; 
+            }
+        }
+        
+        /* --- Remaining Styles --- */
         button {
             width: 100%;
             padding: 12px;
@@ -73,7 +100,7 @@
         #results {
             margin-top: 24px;
             padding: 20px;
-            background-color: #f7f9fc; /* New light color for results background */
+            background-color: #f7f9fc; 
             border-radius: 8px;
             border: 1px solid #cbd5e0;
             display: none;
@@ -98,7 +125,6 @@
             margin-bottom: 16px;
         }
         .checkbox-group input[type="checkbox"] {
-            /* Explicitly size the checkbox and remove interfering styles */
             width: 16px;
             height: 16px;
             margin: 0;
@@ -106,60 +132,109 @@
             padding: 0;
         }
         .checkbox-group label {
-            /* Override global label block display for inline alignment */
             display: inline-block;
             margin-bottom: 0;
             cursor: pointer;
-            line-height: normal; /* Ensure text aligns naturally with the checkbox */
+            line-height: normal; 
         }
         /* --- End Checkbox Alignment Fix --- */
         
-        /* --- Table Styling for Professional Look --- */
+        /* --- Summary Boxes Styling --- */
+        .summary-container {
+            display: flex;
+            flex-wrap: wrap; 
+            gap: 16px; 
+            justify-content: center; 
+            margin-bottom: 24px;
+        }
+        .summary-box {
+            flex: 1 1 calc(33.33% - 16px); 
+            min-width: 200px; 
+            background-color: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 16px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            text-align: center;
+            line-height: 1.4;
+        }
+        .summary-box strong {
+            display: block; 
+            font-size: 0.9rem;
+            color: #718096;
+            margin-bottom: 4px;
+        }
+        .summary-box span {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #2d3748;
+        }
+
+        /* Adjust for smaller screens */
+        @media (max-width: 768px) {
+            .summary-box {
+                flex: 1 1 calc(50% - 16px); 
+            }
+        }
+        @media (max-width: 480px) {
+            .summary-box {
+                flex: 1 1 100%; 
+            }
+        }
+        /* --- End Summary Boxes Styling --- */
+
+        /* --- Table Styling for Subtle Corporate / Financial Grouping (UPDATED: Removed highlighting) --- */
         .results-table {
             width: 100%;
             border-collapse: collapse;
             margin-top: 20px;
             min-width: 800px; 
-            border: 2px solid #2d3748; /* Strong overall border */
-            border-radius: 6px; 
+            border: 1px solid #e2e8f0; /* Overall light border */
+            border-radius: 8px; 
             overflow: hidden; 
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05); /* Subtle shadow */
         }
         .results-table th, .results-table td {
-            text-align: center; /* Centered all text in cells */
-            padding: 10px 8px; 
-            /* Internal grid lines match external border color for seamless frame */
-            border-bottom: 2px solid #2d3748; 
-            border-right: 2px solid #2d3748; 
-            font-size: 0.8rem; 
-            vertical-align: top;
+            text-align: center; 
+            padding: 12px 10px; /* Consistent padding */
+            font-size: 0.85rem; 
+            vertical-align: middle;
+            
+            border-right: none; /* No vertical borders */
+            border-bottom: 1px solid #e2e8f0; /* Light horizontal separator */
         }
         .results-table th {
-            background-color: #4c51bf; /* Header background in primary color */
-            color: white; 
+            /* Lighter Sage/Emerald Green Header */
+            background-color: #A7F3D0; 
+            color: #047857; /* Dark green text for readability */
             font-weight: 700; 
             border-top: none; 
-            border-bottom: 3px solid #3f47a1; /* Thicker header divider */
-            text-align: center; /* Centered header text */
+            /* A matching, slightly darker border */
+            border-bottom: 2px solid #34D399; 
+            text-align: center; 
         }
-        
-        /* Explicitly define colors for better contrast */
+
+        /* Subtle Blue Row Stripping */
         .results-table tbody tr:nth-child(odd) {
-            background-color: #ffffff; /* White rows */
+            background-color: #ffffff; 
         }
         .results-table tbody tr:nth-child(even) {
-            background-color: #e6f0ff; /* Light blue/gray for distinct stripping */
+            background-color: #f7f9ff; /* Very light, faint blue */
+        }
+
+        /* Highlight the final two result columns (Ending Shares and Value) - Now only bold text */
+        .results-table tr td:nth-last-child(2),
+        .results-table tr td:last-child {
+            font-weight: 700; /* Bold the final results */
         }
         
-        /* Specific adjustments for first and last columns/rows */
-        .results-table th:last-child, .results-table td:last-child {
-            border-right: none; /* Remove right border on last column to align with outer container */
-        }
         .results-table tr:last-child td {
             border-bottom: none;
         }
         .dividend-cell {
             line-height: 1.4;
-            text-align: center; /* Centered dividend column specifically */
+            text-align: center; 
+            font-weight: 500; 
         }
         /* --- End Table Styling --- */
     </style>
@@ -210,6 +285,17 @@
             <input type="number" id="years" value="5" min="1" required>
         </div>
 
+        <!-- NEW INPUT: Results Breakdown View -->
+        <div class="input-group">
+            <label for="breakdownView">Results Breakdown:</label>
+            <select id="breakdownView" required>
+                <option value="year">Yearly</option>
+                <option value="month">Monthly</option>
+                <option value="week">Weekly</option>
+            </select>
+        </div>
+        <!-- END NEW INPUT -->
+
         <div class="checkbox-group">
             <input type="checkbox" id="dripEnabled" checked>
             <label for="dripEnabled">Enable DRIP (Dividend Reinvestment)</label>
@@ -218,8 +304,7 @@
         <button onclick="calculateDRIP()">Calculate</button>
 
         <div id="results">
-            <!-- Results will be displayed here -->
-        </div>
+            <!-- Results will be displayed here --></div>
 
     </div>
 
@@ -233,6 +318,7 @@
             const frequency = parseInt(document.getElementById('dividendFrequency').value);
             const years = parseInt(document.getElementById('years').value);
             const dripEnabled = document.getElementById('dripEnabled').checked;
+            const breakdownView = document.getElementById('breakdownView').value;
             
             // Input Validation
             if (isNaN(initialShares) || isNaN(initialStockPrice) || isNaN(dividendAmount) || isNaN(annualGrowthRate) || isNaN(stockPriceGrowthRate) || isNaN(frequency) || isNaN(years) || initialShares < 0 || initialStockPrice <= 0 || years <= 0) {
@@ -242,84 +328,171 @@
                 return;
             }
 
+            // --- Calculation Constants (Weekly Compounding) ---
+            const WEEKS_PER_YEAR = 52;
+            const totalWeeks = years * WEEKS_PER_YEAR;
+
+            // Calculate weekly growth rates (compounding)
+            const weeklyStockGrowthRate = Math.pow((1 + stockPriceGrowthRate), (1 / WEEKS_PER_YEAR)) - 1;
+            const weeklyDividendGrowthRate = Math.pow((1 + annualGrowthRate), (1 / WEEKS_PER_YEAR)) - 1;
+            
+            // The week interval at which a dividend payout occurs
+            const dividendIntervalWeeks = WEEKS_PER_YEAR / frequency;
+
+            // --- Simulation Variables ---
             let sharesOwned = initialShares;
             let currentStockPrice = initialStockPrice; 
-            let totalDividendsEarned = 0;
+            const startingAnnualDividendPerShare = dividendAmount * frequency; 
+            let currentAnnualDividendPerShare = startingAnnualDividendPerShare;
             
-            // The annual dividend *per share* at the start (Year 0)
-            let currentAnnualDividendPerShare = dividendAmount * frequency; 
+            const allWeeklyData = [];
+            let totalDividendsReceivedGlobal = 0;
             
-            const yearlyData = [];
-
-            for (let y = 1; y <= years; y++) {
-                const startingShares = sharesOwned;
-                const startingStockPrice = currentStockPrice;
-                let dividendsThisYear = 0;
-                let sharesBoughtThisYear = 0;
+            let yearTracker = 1;
+            
+            // --- WEEKLY SIMULATION LOOP ---
+            for (let w = 1; w <= totalWeeks; w++) {
                 
-                // 1. Dividend amount per share grows for the year's calculations
-                // Note: The growth is applied based on the previous year's full annual dividend.
-                if (y > 1) {
-                    currentAnnualDividendPerShare *= (1 + annualGrowthRate);
-                } else {
-                    // Current dividend is already calculated from the dividendAmount input, so no growth applied in Year 1
+                // 1. Growth (Compounded Weekly)
+                // Only grow after the first week to represent the starting price/dividend at w=1
+                if (w > 1) { 
+                    currentStockPrice *= (1 + weeklyStockGrowthRate);
+                    currentAnnualDividendPerShare *= (1 + weeklyDividendGrowthRate);
                 }
+
+                let sharesBoughtThisWeek = 0;
+                let dividendsEarnedThisWeek = 0;
                 
-                // 2. Process dividend reinvestment periods (only DRIP, no contribution)
-                for (let p = 0; p < frequency; p++) {
-                    // a) Calculate dividends for the period
-                    const dividendPerShare = currentAnnualDividendPerShare / frequency;
-                    const totalDividendReceived = sharesOwned * dividendPerShare;
-                    dividendsThisYear += totalDividendReceived;
-                    totalDividendsEarned += totalDividendReceived;
+                // 2. Check for Dividend Payout (DRIP Event)
+                // Use a tolerance for floating point week alignment check
+                if (Math.abs(w % dividendIntervalWeeks) < 1e-6 || Math.abs(w % dividendIntervalWeeks - dividendIntervalWeeks) < 1e-6) {
                     
+                    // The dividend per share for this specific payout period is the current annual dividend rate
+                    // (grown up to this week) divided by the frequency.
+                    const dividendPerShare = currentAnnualDividendPerShare / frequency;
+                    
+                    const totalDividendReceivedThisPayout = sharesOwned * dividendPerShare;
+                    dividendsEarnedThisWeek = totalDividendReceivedThisPayout;
+
                     if (dripEnabled) {
-                        // Reinvest using the starting price of the year
-                        const sharesBought = totalDividendReceived / startingStockPrice; 
-                        sharesOwned += sharesBought;
-                        sharesBoughtThisYear += sharesBought;
+                        // Reinvest at the current stock price
+                        sharesBoughtThisWeek = totalDividendReceivedThisPayout / currentStockPrice; 
+                        sharesOwned += sharesBoughtThisWeek;
                     }
                 }
                 
-                // 3. Stock Price Growth (End of Year)
-                currentStockPrice *= (1 + stockPriceGrowthRate);
-                
-                // 4. Record data for the end of the year
-                yearlyData.push({
-                    year: y,
-                    stockPrice: currentStockPrice, // This is the ENDING price for the year
-                    annualDividendPerShare: currentAnnualDividendPerShare,
-                    startingShares: startingShares,
-                    dividendsEarned: dividendsThisYear,
-                    sharesPurchased: sharesBoughtThisYear,
+                totalDividendsReceivedGlobal += dividendsEarnedThisWeek;
+
+                allWeeklyData.push({
+                    week: w,
+                    year: yearTracker,
+                    startingShares: sharesOwned - sharesBoughtThisWeek, // Shares owned *before* this week's DRIP
                     endingShares: sharesOwned,
+                    endingStockPrice: currentStockPrice,
+                    dividendsEarned: dividendsEarnedThisWeek,
+                    sharesPurchased: sharesBoughtThisWeek,
+                    annualDividendPerShare: currentAnnualDividendPerShare,
                     endingValue: sharesOwned * currentStockPrice
                 });
+
+                // Update year tracker
+                if (w % WEEKS_PER_YEAR === 0) {
+                    yearTracker++;
+                }
+            }
+            
+            // --- AGGREGATION based on Breakdown View ---
+            
+            let reportInterval;
+            
+            if (breakdownView === 'year') {
+                reportInterval = WEEKS_PER_YEAR;
+            } else if (breakdownView === 'month') {
+                // Approximate: 4 weeks per month, giving 13 periods per year
+                reportInterval = 4; 
+            } else { // 'week'
+                reportInterval = 1;
+            }
+            
+            const aggregatedData = [];
+            let currentGroupingIndex = 0;
+            let cumulativeDividends = 0;
+            let cumulativeSharesBought = 0;
+            let startingSharesForReport = initialShares;
+            
+            for (let i = 0; i < allWeeklyData.length; i++) {
+                const weekData = allWeeklyData[i];
+                
+                cumulativeDividends += weekData.dividendsEarned;
+                cumulativeSharesBought += weekData.sharesPurchased;
+                currentGroupingIndex++;
+
+                // If the current index hits the report interval, OR it's the very last week
+                if (currentGroupingIndex === reportInterval || i === allWeeklyData.length - 1) {
+                    
+                    const endingShares = weekData.endingShares;
+                    const endingStockPrice = weekData.endingStockPrice;
+                    const endingAnnualDividendPerShare = weekData.annualDividendPerShare;
+
+                    let label;
+                    if (breakdownView === 'year') {
+                        label = `Year ${weekData.year}`;
+                    } else if (breakdownView === 'month') {
+                        // Calculate month within year (1-12)
+                        const monthInYear = Math.min(Math.floor((i / WEEKS_PER_YEAR) * 12) + 1, years * 12);
+                        const yearOfReport = Math.floor(i / WEEKS_PER_YEAR) + 1;
+                        label = `Y${yearOfReport} M${(monthInYear % 12) === 0 ? 12 : (monthInYear % 12)}`;
+                    } else {
+                        label = `W${weekData.week}`;
+                    }
+
+                    aggregatedData.push({
+                        label: label,
+                        stockPrice: endingStockPrice,
+                        annualDividendPerShare: endingAnnualDividendPerShare,
+                        startingShares: startingSharesForReport,
+                        dividendsEarned: cumulativeDividends,
+                        sharesPurchased: cumulativeSharesBought,
+                        endingShares: endingShares,
+                        endingValue: endingShares * endingStockPrice
+                    });
+                    
+                    // Reset for next period
+                    currentGroupingIndex = 0;
+                    cumulativeDividends = 0;
+                    cumulativeSharesBought = 0;
+                    startingSharesForReport = endingShares;
+                }
             }
 
+            // --- FINAL SUMMARY VALUES ---
             const initialInvestmentValue = initialShares * initialStockPrice;
-            const finalValue = sharesOwned * currentStockPrice;
+            // The final value and shares are the last entry in the aggregated data
+            const finalData = aggregatedData[aggregatedData.length - 1];
+            const finalValue = finalData ? finalData.endingValue : initialInvestmentValue;
             
             // --- FORMATTING FOR SUMMARY FIELDS (0 decimal places) ---
             const currencyOptionsWhole = { style: 'currency', currency: 'USD', minimumFractionDigits: 0, maximumFractionDigits: 0 };
 
             const formattedFinalValue = finalValue.toLocaleString('en-US', currencyOptionsWhole);
-            const formattedTotalDividends = totalDividendsEarned.toLocaleString('en-US', currencyOptionsWhole);
+            const formattedTotalDividends = totalDividendsReceivedGlobal.toLocaleString('en-US', currencyOptionsWhole);
             const formattedCapitalGain = (finalValue - initialInvestmentValue).toLocaleString('en-US', currencyOptionsWhole);
             const formattedTotalCashIn = initialInvestmentValue.toLocaleString('en-US', currencyOptionsWhole); 
             
-            const formattedTotalShares = Math.round(sharesOwned).toLocaleString('en-US', { maximumFractionDigits: 0 }); 
+            const formattedTotalShares = finalData ? Math.round(finalData.endingShares).toLocaleString('en-US', { maximumFractionDigits: 0 }) : Math.round(initialShares).toLocaleString('en-US', { maximumFractionDigits: 0 }); 
             
+            // --- Table HTML Generation ---
+
             let tableHTML = `
                 <table class="results-table">
                     <thead>
                         <tr>
-                            <th>Year</th>
+                            <th>Period</th>
                             <th>Stock Price (EOP)</th> 
                             <th>Annual Dividend/Share (Yield)</th>
                             <th>Starting Shares</th>
-                            <th>Dividends Earned</th>
-                            <th>Shares Purchased</th>
+                            <th>Dividends Earned (in Period)</th>
+                            <th>Shares Purchased (in Period)</th>
                             <th>Ending Shares</th>
                             <th>Ending Value</th>
                         </tr>
@@ -327,26 +500,34 @@
                     <tbody>
             `;
 
-            yearlyData.forEach(data => {
+            aggregatedData.forEach(data => {
                 // Formatting for Dividends Earned and Ending Value is set to 0 decimal places
                 const dividendsEarnedFormatted = data.dividendsEarned.toLocaleString('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 0, maximumFractionDigits: 0 });
                 const endingValueFormatted = data.endingValue.toLocaleString('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 0, maximumFractionDigits: 0 });
 
                 // Ensure stockPrice is positive before calculating yield
                 const annualYield = data.stockPrice > 0 ? (data.annualDividendPerShare / data.stockPrice) * 100 : 0;
+                
+                // Use fixed 2 for price, shares to whole numbers
+                const stockPriceFormatted = data.stockPrice.toLocaleString('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                const annualDividendPerShareFormatted = data.annualDividendPerShare.toLocaleString('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                
+                const startingSharesFormatted = Math.round(data.startingShares).toLocaleString('en-US', { maximumFractionDigits: 0 });
+                const sharesPurchasedFormatted = Math.round(data.sharesPurchased).toLocaleString('en-US', { maximumFractionDigits: 0 });
+                const endingSharesFormatted = Math.round(data.endingShares).toLocaleString('en-US', { maximumFractionDigits: 0 });
 
                 tableHTML += `
                     <tr>
-                        <td>${data.year}</td>
-                        <td>${data.stockPrice.toLocaleString('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 2 })}</td>
+                        <td>${data.label}</td>
+                        <td>${stockPriceFormatted}</td>
                         <td class="dividend-cell">
-                            <strong>${data.annualDividendPerShare.toLocaleString('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 2 })}</strong><br>
+                            <strong>${annualDividendPerShareFormatted}</strong><br>
                             (${annualYield.toFixed(2)}%)
                         </td>
-                        <td>${Math.round(data.startingShares).toLocaleString('en-US', { maximumFractionDigits: 0 })}</td> <!-- ROUNDED: Shares to whole number -->
+                        <td>${startingSharesFormatted}</td>
                         <td>${dividendsEarnedFormatted}</td>
-                        <td>${Math.round(data.sharesPurchased).toLocaleString('en-US', { maximumFractionDigits: 0 })}</td> <!-- ROUNDED: Shares to whole number -->
-                        <td>${Math.round(data.endingShares).toLocaleString('en-US', { maximumFractionDigits: 0 })}</td> <!-- ROUNDED: Shares to whole number -->
+                        <td>${sharesPurchasedFormatted}</td>
+                        <td>${endingSharesFormatted}</td>
                         <td>${endingValueFormatted}</td>
                     </tr>
                 `;
@@ -360,18 +541,33 @@
             const resultsDiv = document.getElementById('results');
             resultsDiv.style.display = 'block';
             resultsDiv.innerHTML = `
-                <p><strong>Initial Investment Value:</strong> ${formattedTotalCashIn}</p>
+                <div class="summary-container">
+                    <div class="summary-box">
+                        <strong>Initial Investment Value</strong>
+                        <span>${formattedTotalCashIn}</span>
+                    </div>
+                    <div class="summary-box">
+                        <strong>Total Shares After ${years} Years</strong>
+                        <span>${formattedTotalShares}</span>
+                    </div>
+                    <div class="summary-box">
+                        <strong>Total Estimated Final Value</strong>
+                        <span>${formattedFinalValue}</span>
+                    </div>
+                    <div class="summary-box">
+                        <strong>Total Dividends Earned & ${dripEnabled ? 'Reinvested' : 'Paid Out'}</strong>
+                        <span>${formattedTotalDividends}</span>
+                    </div>
+                    <div class="summary-box">
+                        <strong>Estimated Total Gain</strong>
+                        <span>${formattedCapitalGain}</span>
+                    </div>
+                </div>
                 <hr>
-                <p><strong>Total Shares After ${years} Years:</strong> ${formattedTotalShares}</p>
-                <p><strong>Total Estimated Final Value:</strong> ${formattedFinalValue}</p>
-                <p><strong>Total Dividends Earned & ${dripEnabled ? 'Reinvested' : 'Paid Out'}:</strong> ${formattedTotalDividends}</p>
-                <p><strong>Estimated Total Gain:</strong> ${formattedCapitalGain}</p>
-                <hr>
-                <p><strong>Yearly Breakdown:</strong></p>
+                <p><strong>Breakdown View: ${breakdownView.charAt(0).toUpperCase() + breakdownView.slice(1)}</strong></p>
                 ${tableHTML}
             `;
         }
     </script>
 </body>
 </html>
-
