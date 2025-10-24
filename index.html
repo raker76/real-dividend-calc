@@ -11,48 +11,48 @@
             padding: 20px;
             background-color: #f0f4f8;
             display: flex;
-            flex-direction: column; /* Changed to stack content vertically */
-            justify-content: flex-start; /* Start content from the top */
-            align-items: center; /* Center content horizontally */
+            flex-direction: column; 
+            justify-content: flex-start; 
+            align-items: center; 
             min-height: 100vh;
         }
         .calculator-container {
-            max-width: 1000px; /* Increased width to accommodate new table columns */
+            max-width: 1000px; 
             width: 100%;
             padding: 24px;
             background-color: #ffffff;
             border-radius: 12px;
             box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
             border: 1px solid #e2e8f0;
-            margin-bottom: 20px; /* Add space before the footer */
+            margin-bottom: 20px; 
         }
         h1 {
             color: #1a202c;
             text-align: center;
             font-size: 2rem;
             margin-bottom: 24px;
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
         }
-        
         /* --- Input Group Styling --- */
         .input-group {
-            margin-bottom: 8px; /* REDUCED SPACING HERE (from 16px to 8px) */
-            display: flex; /* Use flex to put label and input side-by-side */
+            margin-bottom: 8px; 
+            display: flex; 
             align-items: center;
             justify-content: space-between;
             gap: 15px;
         }
         label {
-            /* Now acting as the left item in the flex container */
             display: block; 
-            margin-bottom: 0; /* Remove block margin */
+            margin-bottom: 0; 
             font-weight: 600;
             color: #4a5568;
-            flex: 0 0 50%; /* Gives label about half the space on desktop */
+            flex: 0 0 50%; 
             text-align: left;
         }
         input[type="number"], select {
-            /* Now acting as the right item in the flex container */
-            flex: 1 1 50%; /* Takes remaining space */
+            flex: 1 1 50%; 
             padding: 10px 12px;
             border: 1px solid #cbd5e0;
             border-radius: 6px;
@@ -68,23 +68,23 @@
         /* Responsive adjustment for input-group: Stack on small screens */
         @media (max-width: 550px) {
             .input-group {
-                flex-direction: column; /* Stack vertically on small screens */
-                align-items: stretch; /* Stretch items to full width */
+                flex-direction: column; 
+                align-items: stretch; 
             }
             .input-group label {
                 flex: none; 
-                margin-bottom: 8px; /* Restore bottom margin for stacking */
+                margin-bottom: 8px; 
             }
             .input-group input, .input-group select {
                 flex: none; 
             }
         }
         
-        /* --- Remaining Styles --- */
+        /* --- Button Styling (Updated Color) --- */
         button {
             width: 100%;
             padding: 12px;
-            background-color: #0d9488; /* Updated to a deep teal */
+            background-color: #10b981; /* VIBRANT GREEN */
             color: white;
             border: none;
             border-radius: 8px;
@@ -94,11 +94,13 @@
             transition: background-color 0.2s, transform 0.1s;
         }
         button:hover {
-            background-color: #0f766e; /* Darker teal on hover */
+            background-color: #059669; /* Darker green on hover */
         }
         button:active {
             transform: translateY(1px);
         }
+        
+        /* --- Results Styles --- */
         #results {
             margin-top: 24px;
             padding: 20px;
@@ -119,28 +121,6 @@
             background-color: #cbd5e0;
             margin: 16px 0;
         }
-        
-        /* --- Checkbox Alignment Fix (Now unused but kept for integrity) --- */
-        .checkbox-group {
-            display: flex;
-            align-items: center;
-            margin-bottom: 16px;
-            margin-top: 8px; /* Adjust top margin since the previous input group is tighter */
-        }
-        .checkbox-group input[type="checkbox"] {
-            width: 16px;
-            height: 16px;
-            margin: 0;
-            margin-right: 8px;
-            padding: 0;
-        }
-        .checkbox-group label {
-            display: inline-block;
-            margin-bottom: 0;
-            cursor: pointer;
-            line-height: normal; 
-        }
-        /* --- End Checkbox Alignment Fix --- */
         
         /* --- Summary Boxes Styling --- */
         .summary-container {
@@ -196,7 +176,7 @@
             width: 100%;
             border-collapse: collapse;
             margin-top: 20px;
-            min-width: 950px; /* Ensure enough room for 8 columns */
+            min-width: 950px; 
             border: 1px solid #e2e8f0; 
             border-radius: 8px; 
             overflow: hidden; 
@@ -205,7 +185,7 @@
         .results-table th, .results-table td {
             text-align: center; 
             padding: 12px 8px; 
-            font-size: 0.75rem; /* Smaller font for more columns */
+            font-size: 0.75rem; 
             vertical-align: middle;
             border-right: none; 
             border-bottom: 1px solid #e2e8f0; 
@@ -217,7 +197,7 @@
             border-bottom: 2px solid #34D399; 
         }
 
-        /* Subtle Blue Row Stripping */
+        /* Subtle Row Stripping */
         .results-table tbody tr:nth-child(odd) {
             background-color: #ffffff; 
         }
@@ -246,16 +226,16 @@
             margin-top: 30px;
             text-align: center;
             font-size: 0.85rem;
-            color: #718096; /* Gray text for subtlety */
+            color: #718096; 
         }
         .app-footer a {
-            color: #0d9488; /* Match the button/header tone */
+            color: #10b981; /* Match the button/header tone */
             text-decoration: none;
             font-weight: 600;
             transition: color 0.2s;
         }
         .app-footer a:hover {
-            color: #0f766e;
+            color: #059669;
             text-decoration: underline;
         }
     </style>
@@ -290,7 +270,6 @@
             <input type="number" id="dividendGrowth" value="3" min="0" required>
         </div>
 
-        <!-- UPDATED Dividend Frequency: Only Quarterly, Monthly, Weekly -->
         <div class="input-group">
             <label for="dividendFrequency">Dividend Frequency:</label>
             <select id="dividendFrequency" required>
@@ -305,14 +284,11 @@
             <input type="number" id="years" value="5" min="1" required>
         </div>
         
-        <!-- INPUT: Dividend Tax Rate -->
         <div class="input-group">
             <label for="dividendTaxRate">Annual Dividend Tax Rate (%):</label>
             <input type="number" id="dividendTaxRate" value="25" min="0" max="100" required>
         </div>
-        <!-- END INPUT -->
-
-        <!-- Enable Dividend Reinvestment (Now second to last) -->
+        
         <div class="input-group">
             <label for="dripEnabled">Enable Dividend Reinvestment:</label>
             <select id="dripEnabled" required>
@@ -321,7 +297,6 @@
             </select>
         </div>
 
-        <!-- Results Breakdown View (Now the last input) -->
         <div class="input-group">
             <label for="breakdownView">Results Breakdown:</label>
             <select id="breakdownView" required>
@@ -330,8 +305,7 @@
                 <option value="week">Weekly</option>
             </select>
         </div>
-        <!-- END INPUT -->
-
+        
         <button onclick="calculateDRIP()">Calculate</button>
 
         <div id="results">
@@ -355,12 +329,10 @@
             const years = parseInt(document.getElementById('years').value);
             const dividendTaxRate = parseFloat(document.getElementById('dividendTaxRate').value) / 100;
             
-            // UPDATED: Read value from the select box and convert string 'true' to boolean true
             const dripEnabled = document.getElementById('dripEnabled').value === 'true'; 
             
             const breakdownView = document.getElementById('breakdownView').value;
             
-            // Input Validation
             if (isNaN(initialShares) || isNaN(initialStockPrice) || isNaN(dividendAmount) || isNaN(annualGrowthRate) || isNaN(stockPriceGrowthRate) || isNaN(frequency) || isNaN(years) || isNaN(dividendTaxRate) || initialShares < 0 || initialStockPrice <= 0 || years <= 0 || dividendTaxRate < 0 || dividendTaxRate > 1) {
                 const resultsDiv = document.getElementById('results');
                 resultsDiv.style.display = 'block';
@@ -368,66 +340,51 @@
                 return;
             }
 
-            // --- Calculation Constants (Weekly Compounding) ---
             const WEEKS_PER_YEAR = 52;
             const totalWeeks = years * WEEKS_PER_YEAR;
             const netDividendMultiplier = 1 - dividendTaxRate;
 
-            // Calculate weekly growth rates (compounding)
             const weeklyStockGrowthRate = Math.pow((1 + stockPriceGrowthRate), (1 / WEEKS_PER_YEAR)) - 1;
             const weeklyDividendGrowthRate = Math.pow((1 + annualGrowthRate), (1 / WEEKS_PER_YEAR)) - 1;
             
-            // The week interval at which a dividend payout occurs
             const dividendIntervalWeeks = WEEKS_PER_YEAR / frequency;
 
-            // --- Simulation Variables ---
             let sharesOwned = initialShares;
             let currentStockPrice = initialStockPrice; 
             const startingAnnualDividendPerShare = dividendAmount * frequency; 
             let currentAnnualDividendPerShare = startingAnnualDividendPerShare;
             
             const allWeeklyData = [];
-            let totalGrossDividendsGlobal = 0; // Tracks GROSS dividend generated
-            let totalTaxesPaidGlobal = 0; // Tracks total tax paid
+            let totalGrossDividendsGlobal = 0; 
+            let totalTaxesPaidGlobal = 0; 
             
             let yearTracker = 1;
             
-            // --- WEEKLY SIMULATION LOOP ---
             for (let w = 1; w <= totalWeeks; w++) {
                 
-                // 1. Growth (Compounded Weekly)
-                // Only grow after the first week to represent the starting price/dividend at w=1
                 if (w > 1) { 
                     currentStockPrice *= (1 + weeklyStockGrowthRate);
                     currentAnnualDividendPerShare *= (1 + weeklyDividendGrowthRate);
                 }
 
                 let sharesBoughtThisWeek = 0;
-                let grossDividendsEarnedThisWeek = 0; // Gross amount generated
-                let taxPaidThisWeek = 0; // Tax paid this week
-                let netDividendsAvailableThisWeek = 0; // Net amount available for reinvestment/payout
+                let grossDividendsEarnedThisWeek = 0; 
+                let taxPaidThisWeek = 0; 
+                let netDividendsAvailableThisWeek = 0; 
                 
-                // 2. Check for Dividend Payout (DRIP Event)
-                // Use a tolerance for floating point week alignment check
                 if (Math.abs(w % dividendIntervalWeeks) < 1e-6 || Math.abs(w % dividendIntervalWeeks - dividendIntervalWeeks) < 1e-6) {
                     
-                    // The dividend per share for this specific payout period is the current annual dividend rate
-                    // (grown up to this week) divided by the frequency.
                     const dividendPerShare = currentAnnualDividendPerShare / frequency;
-                    
                     const totalGrossDividendReceivedThisPayout = sharesOwned * dividendPerShare;
                     grossDividendsEarnedThisWeek = totalGrossDividendReceivedThisPayout;
 
-                    // Calculate tax and net dividend
                     taxPaidThisWeek = totalGrossDividendReceivedThisPayout * dividendTaxRate;
                     netDividendsAvailableThisWeek = totalGrossDividendReceivedThisPayout * netDividendMultiplier;
                     
-                    // Update global totals
                     totalGrossDividendsGlobal += totalGrossDividendReceivedThisPayout;
                     totalTaxesPaidGlobal += taxPaidThisWeek;
 
                     if (dripEnabled) {
-                        // Reinvest the NET dividend at the current stock price
                         sharesBoughtThisWeek = netDividendsAvailableThisWeek / currentStockPrice; 
                         sharesOwned += sharesBoughtThisWeek;
                     }
@@ -436,41 +393,37 @@
                 allWeeklyData.push({
                     week: w,
                     year: yearTracker,
-                    startingShares: sharesOwned - sharesBoughtThisWeek, // Shares owned *before* this week's DRIP
+                    startingShares: sharesOwned - sharesBoughtThisWeek, 
                     endingShares: sharesOwned,
                     endingStockPrice: currentStockPrice,
-                    grossDividends: grossDividendsEarnedThisWeek, // Gross dividend before tax
-                    taxPaid: taxPaidThisWeek, // Tax amount
-                    netDividends: netDividendsAvailableThisWeek, // Net dividend (used for DRIP)
+                    grossDividends: grossDividendsEarnedThisWeek, 
+                    taxPaid: taxPaidThisWeek, 
+                    netDividends: netDividendsAvailableThisWeek, 
                     sharesPurchased: sharesBoughtThisWeek,
                     annualDividendPerShare: currentAnnualDividendPerShare,
                     endingValue: sharesOwned * currentStockPrice
                 });
 
-                // Update year tracker
                 if (w % WEEKS_PER_YEAR === 0) {
                     yearTracker++;
                 }
             }
-            
-            // --- AGGREGATION based on Breakdown View ---
             
             let reportInterval;
             
             if (breakdownView === 'year') {
                 reportInterval = WEEKS_PER_YEAR;
             } else if (breakdownView === 'month') {
-                // Approximate: 4 weeks per month, giving 13 periods per year
                 reportInterval = 4; 
-            } else { // 'week'
+            } else { 
                 reportInterval = 1;
             }
             
             const aggregatedData = [];
             let currentGroupingIndex = 0;
-            let cumulativeGrossDividends = 0; // Accumulates Gross
-            let cumulativeTaxesPaid = 0; // Accumulates Tax
-            let cumulativeNetDividends = 0; // Accumulates Net
+            let cumulativeGrossDividends = 0; 
+            let cumulativeTaxesPaid = 0; 
+            let cumulativeNetDividends = 0; 
             let cumulativeSharesBought = 0;
             let startingSharesForReport = initialShares;
             
@@ -483,7 +436,6 @@
                 cumulativeSharesBought += weekData.sharesPurchased;
                 currentGroupingIndex++;
 
-                // If the current index hits the report interval, OR it's the very last week
                 if (currentGroupingIndex === reportInterval || i === allWeeklyData.length - 1) {
                     
                     const endingShares = weekData.endingShares;
@@ -494,10 +446,8 @@
                     if (breakdownView === 'year') {
                         label = `Year ${weekData.year}`;
                     } else if (breakdownView === 'month') {
-                        // Calculate month within year (1-12)
                         const monthInYear = Math.min(Math.floor((i / WEEKS_PER_YEAR) * 12) + 1, years * 12);
                         const yearOfReport = Math.floor(i / WEEKS_PER_YEAR) + 1;
-                        // Label format: Y1 M1, Y1 M2, etc.
                         label = `Y${yearOfReport} M${(monthInYear % 12) === 0 ? 12 : (monthInYear % 12)}`; 
                     } else {
                         label = `W${weekData.week}`;
@@ -516,7 +466,6 @@
                         endingValue: endingShares * endingStockPrice
                     });
                     
-                    // Reset for next period
                     currentGroupingIndex = 0;
                     cumulativeGrossDividends = 0;
                     cumulativeTaxesPaid = 0;
@@ -526,13 +475,10 @@
                 }
             }
 
-            // --- FINAL SUMMARY VALUES ---
             const initialInvestmentValue = initialShares * initialStockPrice;
-            // The final value and shares are the last entry in the aggregated data
             const finalData = aggregatedData[aggregatedData.length - 1];
             const finalValue = finalData ? finalData.endingValue : initialInvestmentValue;
             
-            // --- FORMATTING FOR SUMMARY FIELDS (0 decimal places) ---
             const currencyOptionsWhole = { style: 'currency', currency: 'USD', minimumFractionDigits: 0, maximumFractionDigits: 0 };
             const currencyOptionsFractional = { style: 'currency', currency: 'USD', minimumFractionDigits: 2, maximumFractionDigits: 2 };
 
@@ -542,13 +488,10 @@
             const formattedTotalShares = finalData ? Math.round(finalData.endingShares).toLocaleString('en-US', { maximumFractionDigits: 0 }) : Math.round(initialShares).toLocaleString('en-US', { maximumFractionDigits: 0 }); 
             const formattedCapitalGain = (finalValue - initialInvestmentValue).toLocaleString('en-US', currencyOptionsWhole);
 
-            // Summary fields
             const formattedTotalGrossDividends = totalGrossDividendsGlobal.toLocaleString('en-US', currencyOptionsWhole);
             const formattedTotalNetDividends = (totalGrossDividendsGlobal - totalTaxesPaidGlobal).toLocaleString('en-US', currencyOptionsWhole);
             const formattedTotalTaxesPaid = totalTaxesPaidGlobal.toLocaleString('en-US', currencyOptionsWhole);
             
-            // --- Table HTML Generation ---
-
             let tableHTML = `
                 <table class="results-table">
                     <thead>
@@ -559,8 +502,8 @@
                             <th>Starting Shares</th>
                             <th>Gross Dividend Earned</th>
                             <th>Tax Paid</th>
-                            <th>Net Dividend Available</th>
-                            <th>Shares Purchased (Net)</th>
+                            <th>Net Dividend</th>
+                            <th>Shares Purchased</th>
                             <th>Ending Shares</th>
                             <th>Ending Value</th>
                         </tr>
@@ -569,7 +512,6 @@
             `;
 
             aggregatedData.forEach(data => {
-                // Formatting for financial values
                 const stockPriceFormatted = data.stockPrice.toLocaleString('en-US', currencyOptionsFractional);
                 const annualDividendPerShareFormatted = data.annualDividendPerShare.toLocaleString('en-US', currencyOptionsFractional);
                 const grossDividendsFormatted = data.grossDividends.toLocaleString('en-US', currencyOptionsWhole);
@@ -577,7 +519,6 @@
                 const netDividendsFormatted = data.netDividends.toLocaleString('en-US', currencyOptionsWhole);
                 const endingValueFormatted = data.endingValue.toLocaleString('en-US', currencyOptionsWhole);
 
-                // Formatting for numerical values
                 const annualYield = data.stockPrice > 0 ? (data.annualDividendPerShare / data.stockPrice) * 100 : 0;
                 const startingSharesFormatted = Math.round(data.startingShares).toLocaleString('en-US', { maximumFractionDigits: 0 });
                 const sharesPurchasedFormatted = Math.round(data.sharesPurchased).toLocaleString('en-US', { maximumFractionDigits: 0 });
@@ -624,7 +565,7 @@
                         <span>${formattedTotalTaxesPaid}</span>
                     </div>
                     <div class="summary-box">
-                        <strong>Total Net Dividends (Available)</strong>
+                        <strong>Total Net Dividends</strong>
                         <span>${formattedTotalNetDividends}</span>
                     </div>
                     <div class="summary-box">
