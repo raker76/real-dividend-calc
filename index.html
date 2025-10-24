@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dividend DRIP Calculator</title>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f0f4f8;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .calculator-container {
+            max-width: 900px; /* Increased width to accommodate the table */
+            width: 100%;
+            padding: 24px;
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e2e8f0;
+        }
+        h1 {
+            color: #1a202c;
+            text-align: center;
+            font-size: 2rem;
+            margin-bottom: 24px;
+        }
+        .input-group {
+            margin-bottom: 16px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #4a5568;
+        }
+        input[type="number"], select {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #cbd5e0;
+            border-radius: 6px;
+            box-sizing: border-box;
+            transition: border-color 0.2s;
+        }
+        input[type="number"]:focus, select:focus {
+            outline: none;
+            border-color: #4c51bf;
+            box-shadow: 0 0 0 2px rgba(76, 81, 191, 0.2);
+        }
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #4c51bf;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 700;
+            transition: background-color 0.2s, transform 0.1s;
+        }
+        button:hover {
+            background-color: #3f47a1;
+        }
+        button:active {
+            transform: translateY(1px);
+        }
+        #results {
+            margin-top: 24px;
+            padding: 20px;
+            background-color: #f7f9fc; /* New light color for results background */
+            border-radius: 8px;
+            border: 1px solid #cbd5e0;
+            display: none;
+            overflow-x: auto; 
+        }
+        #results p {
+            margin: 8px 0;
+            font-size: 1.1rem;
+            color: #2d3748;
+        }
+        #results hr {
+            border: 0;
+            height: 1px;
+            background-color: #cbd5e0;
+            margin: 16px 0;
+        }
+        
+        /* --- Checkbox Alignment Fix --- */
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+        .checkbox-group input[type="checkbox"] {
+            /* Explicitly size the checkbox and remove interfering styles */
+            width: 16px;
+            height: 16px;
+            margin: 0;
+            margin-right: 8px;
+            padding: 0;
+        }
+        .checkbox-group label {
+            /* Override global label block display for inline alignment */
+            display: inline-block;
+            margin-bottom: 0;
+            cursor: pointer;
+            line-height: normal; /* Ensure text aligns naturally with the checkbox */
+        }
+        /* --- End Checkbox Alignment Fix --- */
+        
+        /* --- Table Styling for Professional Look --- */
+        .results-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            min-width: 800px; 
+            border: 2px solid #2d3748; /* Strong overall border */
+            border-radius: 6px; 
+            overflow: hidden; 
+        }
+        .results-table th, .results-table td {
+            text-align: center; /* Centered all text in cells */
+            padding: 10px 8px; 
+            /* Internal grid lines match external border color for seamless frame */
+            border-bottom: 2px solid #2d3748; 
+            border-right: 2px solid #2d3748; 
+            font-size: 0.8rem; 
+            vertical-align: top;
+        }
+        .results-table th {
+            background-color: #4c51bf; /* Header background in primary color */
+            color: white; 
+            font-weight: 700; 
+            border-top: none; 
+            border-bottom: 3px solid #3f47a1; /* Thicker header divider */
+            text-align: center; /* Centered header text */
+        }
+        
+        /* Explicitly define colors for better contrast */
+        .results-table tbody tr:nth-child(odd) {
+            background-color: #ffffff; /* White rows */
+        }
+        .results-table tbody tr:nth-child(even) {
+            background-color: #e6f0ff; /* Light blue/gray for distinct stripping */
+        }
+        
+        /* Specific adjustments for first and last columns/rows */
+        .results-table th:last-child, .results-table td:last-child {
+            border-right: none; /* Remove right border on last column to align with outer container */
+        }
+        .results-table tr:last-child td {
+            border-bottom: none;
+        }
+        .dividend-cell {
+            line-height: 1.4;
+            text-align: center; /* Centered dividend column specifically */
+        }
+        /* --- End Table Styling --- */
+    </style>
+</head>
+<body>
+
+    <div class="calculator-container">
+        <h1>Dividend DRIP Calculator</h1>
+
+        <div class="input-group">
+            <label for="initialShares">Number of Initial Shares:</label>
+            <input type="number" id="initialShares" value="10000" min="0" required>
+        </div>
+        
+        <div class="input-group">
+            <label for="stockPrice">Current Stock Price ($):</label>
+            <input type="number" id="stockPrice" value="5" min="0.01" required>
+        </div>
+        
+        <div class="input-group">
+            <label for="stockPriceGrowth">Annual Stock Price Growth Rate (%):</label>
+            <input type="number" id="stockPriceGrowth" value="5" min="0" required>
+        </div>
+
+        <div class="input-group">
+            <label for="dividendAmount">Dividend Amount (Per Payout $):</label>
+            <input type="number" id="dividendAmount" value="0.09" min="0" required>
+        </div>
+
+        <div class="input-group">
+            <label for="dividendGrowth">Annual Dividend Growth Rate (%):</label>
+            <input type="number" id="dividendGrowth" value="3" min="0" required>
+        </div>
+
+        <div class="input-group">
+            <label for="dividendFrequency">Dividend Frequency:</label>
+            <select id="dividendFrequency" required>
+                <option value="1">Annually</option>
+                <option value="2">Semi-Annually</option>
+                <option value="4">Quarterly</option>
+                <option value="12">Monthly</option>
+                <option value="52" selected>Weekly</option>
+            </select>
+        </div>
+
+        <div class="input-group">
+            <label for="years">Investment Horizon (Years):</label>
+            <input type="number" id="years" value="5" min="1" required>
+        </div>
+
+        <div class="checkbox-group">
+            <input type="checkbox" id="dripEnabled" checked>
+            <label for="dripEnabled">Enable DRIP (Dividend Reinvestment)</label>
+        </div>
+
+        <button onclick="calculateDRIP()">Calculate</button>
+
+        <div id="results">
+            <!-- Results will be displayed here -->
+        </div>
+
+    </div>
+
+    <script>
+        function calculateDRIP() {
+            const initialShares = parseFloat(document.getElementById('initialShares').value);
+            const initialStockPrice = parseFloat(document.getElementById('stockPrice').value);
+            const stockPriceGrowthRate = parseFloat(document.getElementById('stockPriceGrowth').value) / 100;
+            const dividendAmount = parseFloat(document.getElementById('dividendAmount').value);
+            const annualGrowthRate = parseFloat(document.getElementById('dividendGrowth').value) / 100;
+            const frequency = parseInt(document.getElementById('dividendFrequency').value);
+            const years = parseInt(document.getElementById('years').value);
+            const dripEnabled = document.getElementById('dripEnabled').checked;
+            
+            // Input Validation
+            if (isNaN(initialShares) || isNaN(initialStockPrice) || isNaN(dividendAmount) || isNaN(annualGrowthRate) || isNaN(stockPriceGrowthRate) || isNaN(frequency) || isNaN(years) || initialShares < 0 || initialStockPrice <= 0 || years <= 0) {
+                const resultsDiv = document.getElementById('results');
+                resultsDiv.style.display = 'block';
+                resultsDiv.innerHTML = `<p style="color: #c53030; font-weight: bold;">Please enter valid non-negative numbers for all fields. Stock Price must be positive.</p>`;
+                return;
+            }
+
+            let sharesOwned = initialShares;
+            let currentStockPrice = initialStockPrice; 
+            let totalDividendsEarned = 0;
+            
+            // The annual dividend *per share* at the start (Year 0)
+            let currentAnnualDividendPerShare = dividendAmount * frequency; 
+            
+            const yearlyData = [];
+
+            for (let y = 1; y <= years; y++) {
+                const startingShares = sharesOwned;
+                const startingStockPrice = currentStockPrice;
+                let dividendsThisYear = 0;
+                let sharesBoughtThisYear = 0;
+                
+                // 1. Dividend amount per share grows for the year's calculations
+                // Note: The growth is applied based on the previous year's full annual dividend.
+                if (y > 1) {
+                    currentAnnualDividendPerShare *= (1 + annualGrowthRate);
+                } else {
+                    // Current dividend is already calculated from the dividendAmount input, so no growth applied in Year 1
+                }
+                
+                // 2. Process dividend reinvestment periods (only DRIP, no contribution)
+                for (let p = 0; p < frequency; p++) {
+                    // a) Calculate dividends for the period
+                    const dividendPerShare = currentAnnualDividendPerShare / frequency;
+                    const totalDividendReceived = sharesOwned * dividendPerShare;
+                    dividendsThisYear += totalDividendReceived;
+                    totalDividendsEarned += totalDividendReceived;
+                    
+                    if (dripEnabled) {
+                        // Reinvest using the starting price of the year
+                        const sharesBought = totalDividendReceived / startingStockPrice; 
+                        sharesOwned += sharesBought;
+                        sharesBoughtThisYear += sharesBought;
+                    }
+                }
+                
+                // 3. Stock Price Growth (End of Year)
+                currentStockPrice *= (1 + stockPriceGrowthRate);
+                
+                // 4. Record data for the end of the year
+                yearlyData.push({
+                    year: y,
+                    stockPrice: currentStockPrice, // This is the ENDING price for the year
+                    annualDividendPerShare: currentAnnualDividendPerShare,
+                    startingShares: startingShares,
+                    dividendsEarned: dividendsThisYear,
+                    sharesPurchased: sharesBoughtThisYear,
+                    endingShares: sharesOwned,
+                    endingValue: sharesOwned * currentStockPrice
+                });
+            }
+
+            const initialInvestmentValue = initialShares * initialStockPrice;
+            const finalValue = sharesOwned * currentStockPrice;
+            
+            // --- FORMATTING FOR SUMMARY FIELDS (0 decimal places) ---
+            const currencyOptionsWhole = { style: 'currency', currency: 'USD', minimumFractionDigits: 0, maximumFractionDigits: 0 };
+
+            const formattedFinalValue = finalValue.toLocaleString('en-US', currencyOptionsWhole);
+            const formattedTotalDividends = totalDividendsEarned.toLocaleString('en-US', currencyOptionsWhole);
+            const formattedCapitalGain = (finalValue - initialInvestmentValue).toLocaleString('en-US', currencyOptionsWhole);
+            const formattedTotalCashIn = initialInvestmentValue.toLocaleString('en-US', currencyOptionsWhole); 
+            
+            const formattedTotalShares = Math.round(sharesOwned).toLocaleString('en-US', { maximumFractionDigits: 0 }); 
+            
+            let tableHTML = `
+                <table class="results-table">
+                    <thead>
+                        <tr>
+                            <th>Year</th>
+                            <th>Stock Price (EOP)</th> 
+                            <th>Annual Dividend/Share (Yield)</th>
+                            <th>Starting Shares</th>
+                            <th>Dividends Earned</th>
+                            <th>Shares Purchased</th>
+                            <th>Ending Shares</th>
+                            <th>Ending Value</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+
+            yearlyData.forEach(data => {
+                // Formatting for Dividends Earned and Ending Value is set to 0 decimal places
+                const dividendsEarnedFormatted = data.dividendsEarned.toLocaleString('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 0, maximumFractionDigits: 0 });
+                const endingValueFormatted = data.endingValue.toLocaleString('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 0, maximumFractionDigits: 0 });
+
+                // Ensure stockPrice is positive before calculating yield
+                const annualYield = data.stockPrice > 0 ? (data.annualDividendPerShare / data.stockPrice) * 100 : 0;
+
+                tableHTML += `
+                    <tr>
+                        <td>${data.year}</td>
+                        <td>${data.stockPrice.toLocaleString('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 2 })}</td>
+                        <td class="dividend-cell">
+                            <strong>${data.annualDividendPerShare.toLocaleString('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 2 })}</strong><br>
+                            (${annualYield.toFixed(2)}%)
+                        </td>
+                        <td>${Math.round(data.startingShares).toLocaleString('en-US', { maximumFractionDigits: 0 })}</td> <!-- ROUNDED: Shares to whole number -->
+                        <td>${dividendsEarnedFormatted}</td>
+                        <td>${Math.round(data.sharesPurchased).toLocaleString('en-US', { maximumFractionDigits: 0 })}</td> <!-- ROUNDED: Shares to whole number -->
+                        <td>${Math.round(data.endingShares).toLocaleString('en-US', { maximumFractionDigits: 0 })}</td> <!-- ROUNDED: Shares to whole number -->
+                        <td>${endingValueFormatted}</td>
+                    </tr>
+                `;
+            });
+
+            tableHTML += `
+                    </tbody>
+                </table>
+            `;
+
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.style.display = 'block';
+            resultsDiv.innerHTML = `
+                <p><strong>Initial Investment Value:</strong> ${formattedTotalCashIn}</p>
+                <hr>
+                <p><strong>Total Shares After ${years} Years:</strong> ${formattedTotalShares}</p>
+                <p><strong>Total Estimated Final Value:</strong> ${formattedFinalValue}</p>
+                <p><strong>Total Dividends Earned & ${dripEnabled ? 'Reinvested' : 'Paid Out'}:</strong> ${formattedTotalDividends}</p>
+                <p><strong>Estimated Total Gain:</strong> ${formattedCapitalGain}</p>
+                <hr>
+                <p><strong>Yearly Breakdown:</strong></p>
+                ${tableHTML}
+            `;
+        }
+    </script>
+</body>
+</html>
+
