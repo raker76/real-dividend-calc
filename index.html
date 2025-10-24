@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dividend Calculator</title>
     <style>
@@ -134,6 +133,7 @@
             margin-bottom: 24px;
         }
         .summary-box {
+            /* Now accommodating fewer boxes, dynamically adjusting */
             flex: 1 1 calc(25% - 16px); 
             min-width: 150px; 
             background-color: #ffffff;
@@ -489,12 +489,23 @@
             const formattedFinalValue = finalValue.toLocaleString('en-US', currencyOptionsWhole);
             const formattedTotalCashIn = initialInvestmentValue.toLocaleString('en-US', currencyOptionsWhole); 
             const formattedTotalShares = finalData ? Math.round(finalData.endingShares).toLocaleString('en-US', { maximumFractionDigits: 0 }) : Math.round(initialShares).toLocaleString('en-US', { maximumFractionDigits: 0 }); 
-            const formattedCapitalGain = (finalValue - initialInvestmentValue).toLocaleString('en-US', currencyOptionsWhole);
+            const totalCapitalGain = finalValue - initialInvestmentValue;
+            const formattedCapitalGain = totalCapitalGain.toLocaleString('en-US', currencyOptionsWhole);
 
+            const totalNetDividendsValue = totalGrossDividendsGlobal - totalTaxesPaidGlobal;
             const formattedTotalGrossDividends = totalGrossDividendsGlobal.toLocaleString('en-US', currencyOptionsWhole);
-            const formattedTotalNetDividends = (totalGrossDividendsGlobal - totalTaxesPaidGlobal).toLocaleString('en-US', currencyOptionsWhole);
+            const formattedTotalNetDividends = totalNetDividendsValue.toLocaleString('en-US', currencyOptionsWhole);
             const formattedTotalTaxesPaid = totalTaxesPaidGlobal.toLocaleString('en-US', currencyOptionsWhole);
             
+            // Existing: Total Net Yield (Still calculated but not displayed)
+            const totalYieldPercentage = (initialInvestmentValue > 0) ? (totalNetDividendsValue / initialInvestmentValue) * 100 : 0;
+            const formattedTotalYield = totalYieldPercentage.toFixed(2) + '%';
+            
+            // NEW CALCULATION: Total Percentage Gain
+            const totalPercentageGainValue = (initialInvestmentValue > 0) ? (totalCapitalGain / initialInvestmentValue) * 100 : 0;
+            const formattedTotalPercentageGain = totalPercentageGainValue.toFixed(2) + '%';
+
+
             let tableHTML = `
                 <table class="results-table">
                     <thead>
@@ -561,33 +572,31 @@
             resultsDiv.innerHTML = `
                 <div class="summary-container">
                     <div class="summary-box">
-                        <strong>Initial Investment Value</strong>
+                        <strong>Initial Investment</strong>
                         <span>${formattedTotalCashIn}</span>
                     </div>
                     <div class="summary-box">
-                        <strong>Total Gross Dividends Generated</strong>
-                        <span>${formattedTotalGrossDividends}</span>
+                        <strong>Total Shares</strong>
+                        <span>${formattedTotalShares}</span>
                     </div>
                     <div class="summary-box">
-                        <strong>Total Tax Paid</strong>
-                        <span>${formattedTotalTaxesPaid}</span>
+                        <strong>Final Value</strong>
+                        <span>${formattedFinalValue}</span>
                     </div>
+                    <div class="summary-box">
+                        <strong>Total Gain ($)</strong>
+                        <span>${formattedCapitalGain}</span>
+                    </div>
+                    <div class="summary-box" style="background-color: #e0f2fe;">
+                        <strong>Total Gain (%)</strong>
+                        <span>${formattedTotalPercentageGain}</span>
+                    </div>
+                    
                     <div class="summary-box">
                         <strong>Total Net Dividends</strong>
                         <span>${formattedTotalNetDividends}</span>
                     </div>
-                    <div class="summary-box">
-                        <strong>Total Shares After ${years} Years</strong>
-                        <span>${formattedTotalShares}</span>
-                    </div>
-                    <div class="summary-box">
-                        <strong>Total Estimated Final Value</strong>
-                        <span>${formattedFinalValue}</span>
-                    </div>
-                    <div class="summary-box">
-                        <strong>Estimated Total Gain</strong>
-                        <span>${formattedCapitalGain}</span>
-                    </div>
+                    
                 </div>
                 <hr>
                 <p><strong>Breakdown View: ${breakdownView.charAt(0).toUpperCase() + breakdownView.slice(1)}</strong></p>
