@@ -6,7 +6,7 @@
     <!-- Updated Title for SEO and clarity -->
     <title>Dividend Reinvestment (DRIP) and Compounding Calculator</title>
 
-    <!-- Google tag (gtag.js) -->
+    <!-- Google Analytics Tag (GA4) - Updated with G-YVBR428CTC -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-YVBR428CTC"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
@@ -392,9 +392,11 @@
             const totalWeeks = years * WEEKS_PER_YEAR;
             const netDividendMultiplier = 1 - dividendTaxRate;
 
+            // Calculate weekly compounding rates
             const weeklyStockGrowthRate = Math.pow((1 + stockPriceGrowthRate), (1 / WEEKS_PER_YEAR)) - 1;
             const weeklyDividendGrowthRate = Math.pow((1 + annualGrowthRate), (1 / WEEKS_PER_YEAR)) - 1;
             
+            // Calculate the non-integer interval for dividend payments (e.g., 52/12 = 4.333... weeks)
             const dividendIntervalWeeks = WEEKS_PER_YEAR / frequency;
 
             let sharesOwned = initialShares;
@@ -408,9 +410,13 @@
             
             let yearTracker = 1;
             
+            // FIX: Set the initial payout target to Week 1. This ensures the first monthly/quarterly report is non-zero.
+            let nextPayoutWeekIndex = 1; 
+            
             for (let w = 1; w <= totalWeeks; w++) {
                 
                 if (w > 1) { 
+                    // Stock price and dividend per share grow every week
                     currentStockPrice *= (1 + weeklyStockGrowthRate);
                     currentAnnualDividendPerShare *= (1 + weeklyDividendGrowthRate);
                 }
@@ -420,7 +426,8 @@
                 let taxPaidThisWeek = 0; 
                 let netDividendsAvailableThisWeek = 0; 
                 
-                if (Math.abs(w % dividendIntervalWeeks) < 1e-6 || Math.abs(w % dividendIntervalWeeks - dividendIntervalWeeks) < 1e-6) {
+                // FIXED LOGIC: Check if the current week (w) has reached or passed the theoretical next payout time.
+                if (w >= nextPayoutWeekIndex) {
                     
                     const dividendPerShare = currentAnnualDividendPerShare / frequency;
                     const totalGrossDividendReceivedThisPayout = sharesOwned * dividendPerShare;
@@ -436,6 +443,10 @@
                         sharesBoughtThisWeek = netDividendsAvailableThisWeek / currentStockPrice; 
                         sharesOwned += sharesBoughtThisWeek;
                     }
+                    
+                    // Advance the index by the exact interval. 
+                    // This maintains the correct frequency (e.g., exactly 12 times a year).
+                    nextPayoutWeekIndex += dividendIntervalWeeks;
                 }
                 
                 allWeeklyData.push({
@@ -462,6 +473,7 @@
             if (breakdownView === 'year') {
                 reportInterval = WEEKS_PER_YEAR;
             } else if (breakdownView === 'month') {
+                // Use a fixed 4-week interval for a cleaner 'monthly' report visualization
                 reportInterval = 4; 
             } else { 
                 reportInterval = 1;
@@ -484,6 +496,7 @@
                 cumulativeSharesBought += weekData.sharesPurchased;
                 currentGroupingIndex++;
 
+                // Check if the current report period is complete or if we are at the end of the simulation
                 if (currentGroupingIndex === reportInterval || i === allWeeklyData.length - 1) {
                     
                     const endingShares = weekData.endingShares;
@@ -494,9 +507,12 @@
                     if (breakdownView === 'year') {
                         label = `Year ${weekData.year}`;
                     } else if (breakdownView === 'month') {
-                        const monthInYear = Math.min(Math.floor((i / WEEKS_PER_YEAR) * 12) + 1, years * 12);
+                        // Calculate the logical month number for the report
+                        const totalMonths = Math.min(Math.floor((i / WEEKS_PER_YEAR) * 12) + 1, years * 12);
                         const yearOfReport = Math.floor(i / WEEKS_PER_YEAR) + 1;
-                        label = `Y${yearOfReport} M${(monthInYear % 12) === 0 ? 12 : (monthInYear % 12)}`; 
+                        // Use modulo 12 to get the month within the year, but ensure month 12 is correct
+                        const monthInYear = (totalMonths % 12) === 0 ? 12 : (totalMonths % 12); 
+                        label = `Y${yearOfReport} M${monthInYear}`; 
                     } else {
                         label = `W${weekData.week}`;
                     }
@@ -582,6 +598,7 @@
                 const netDividendsFormatted = data.netDividends.toLocaleString('en-US', currencyOptionsWhole);
                 const endingValueFormatted = data.endingValue.toLocaleString('en-US', currencyOptionsWhole);
 
+                // We round the shares for display in the table, but the underlying 'data' object holds the accurate float.
                 const startingSharesFormatted = Math.round(data.startingShares).toLocaleString('en-US', { maximumFractionDigits: 0 });
                 const sharesPurchasedFormatted = Math.round(data.sharesPurchased).toLocaleString('en-US', { maximumFractionDigits: 0 });
                 const endingSharesFormatted = Math.round(data.endingShares).toLocaleString('en-US', { maximumFractionDigits: 0 });
