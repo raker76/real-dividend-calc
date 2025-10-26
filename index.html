@@ -2,7 +2,25 @@
 <html lang="en">
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dividend Calculator</title>
+    
+    <!-- Updated Title for SEO and clarity -->
+    <title>Dividend Reinvestment (DRIP) and Compounding Calculator</title>
+
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="Calculate the future value of your dividend reinvestment plan (DRIP) with compounding growth and taxes over multiple years. Plan your dividend stock portfolio and see the compounding effect.">
+    <meta name="keywords" content="DRIP calculator, dividend reinvestment, compounding interest, stock growth, dividend tax, investment planner, financial modeling, dividend calculator">
+    
+    <!-- Canonical Link (Use your real domain here if deploying) -->
+    <link rel="canonical" href="https://example.com/drip-calculator">
+
+    <!-- Open Graph / Social Media Tags for sharing -->
+    <meta property="og:title" content="Advanced DRIP & Dividend Compounding Calculator">
+    <meta property="og:description" content="Calculate the future value of your dividend reinvestment plan (DRIP) with compounding growth and taxes over multiple years.">
+    <meta property="og:type" content="website">
+    <!-- Replace 'https://example.com/drip-calculator' with your actual URL when deploying -->
+    <meta property="og:url" content="https://example.com/drip-calculator">
+    <!-- Consider adding an og:image tag for a visual preview when sharing -->
+
     <style>
         body {
             font-family: 'Inter', sans-serif;
@@ -179,20 +197,37 @@
             width: 100%;
             border-collapse: collapse;
             margin-top: 20px;
-            min-width: 950px; 
+            /* Reduced minimum width since two columns were removed */
+            min-width: 750px; 
             border: 1px solid #e2e8f0; 
             border-radius: 8px; 
             overflow: hidden; 
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
         }
-        .results-table th, .results-table td {
+        /* Header Row Styling (10px vertical padding) */
+        .results-table th {
             text-align: center; 
-            padding: 12px 8px; 
-            font-size: 0.75rem; 
+            padding: 10px 6px; 
+            font-size: 0.85rem; 
             vertical-align: middle;
             border-right: none; 
             border-bottom: 1px solid #e2e8f0; 
         }
+        /* Data Row Styling (6px vertical padding) */
+        .results-table td {
+            text-align: center; 
+            padding: 6px 6px; 
+            font-size: 0.85rem; 
+            vertical-align: middle;
+            border-right: none; 
+            border-bottom: 1px solid #e2e8f0; 
+        }
+        
+        /* Adjusted font size for body data */
+        .results-table tbody td {
+            font-size: 0.8rem; 
+        }
+
         .results-table th {
             background-color: #A7F3D0; 
             color: #047857;
@@ -514,8 +549,6 @@
                             <th>Stock Price (EOP)</th> 
                             <th>Annual Net Dividend (Yield)</th>
                             <th>Starting Shares</th>
-                            <th>Gross Dividend Earned</th>
-                            <th>Tax Paid</th>
                             <th>Net Dividend</th>
                             <th>Shares Purchased</th>
                             <th>Ending Shares</th>
@@ -552,9 +585,7 @@
                             (${netAnnualYield.toFixed(2)}%)
                         </td>
                         <td>${startingSharesFormatted}</td>
-                        <td>${grossDividendsFormatted}</td>
-                        <td>${taxesPaidFormatted}</td>
-                        <td>${netDividendsFormatted}</td>
+                        <td>${netDividendsFormatted}</td> 
                         <td>${sharesPurchasedFormatted}</td>
                         <td>${endingSharesFormatted}</td>
                         <td>${endingValueFormatted}</td>
