@@ -243,8 +243,8 @@
             width: 100%;
             border-collapse: collapse;
             margin-top: 20px;
-            /* Reduced minimum width since two columns were removed */
-            min-width: 750px; 
+            /* Reduced minimum width since one column was removed (750px -> 700px) */
+            min-width: 700px; 
             border: 1px solid #e2e8f0; 
             border-radius: 8px; 
             overflow: hidden; 
@@ -259,10 +259,10 @@
             border-right: none; 
             border-bottom: 1px solid #e2e8f0; 
         }
-        /* Data Row Styling (6px vertical padding) */
+        /* Data Row Styling (10px vertical padding - Increased for readability) */
         .results-table td {
             text-align: center; 
-            padding: 6px 6px; 
+            padding: 10px 6px; /* Increased vertical padding */
             font-size: 0.95rem; /* Increased size for data */
             vertical-align: middle;
             border-right: none; 
@@ -298,11 +298,7 @@
         .results-table tr:last-child td {
             border-bottom: none;
         }
-        .dividend-cell {
-            line-height: 1.4;
-            text-align: center; 
-            font-weight: 500; 
-        }
+        /* Removed .dividend-cell styling as it's no longer multi-line */
         /* --- End Table Styling --- */
 
         /* --- Footer Styling --- */
@@ -351,7 +347,7 @@
                 </div>
                 
                 <div class="input-group">
-                    <label for="years">Investment Horizon (Years)</label>
+                    <label for="years">Years to Project</label>
                     <input type="number" id="years" value="5" min="1" required>
                 </div>
                 
@@ -603,23 +599,35 @@
             const currencyOptionsFractional = { style: 'currency', currency: 'USD', minimumFractionDigits: 2, maximumFractionDigits: 2 };
 
 
-            const formattedFinalValue = finalValue.toLocaleString('en-US', currencyOptionsWhole);
-            const formattedTotalCashIn = initialInvestmentValue.toLocaleString('en-US', currencyOptionsWhole); 
-            const formattedTotalShares = finalData ? Math.round(finalData.endingShares).toLocaleString('en-US', { maximumFractionDigits: 0 }) : Math.round(initialShares).toLocaleString('en-US', { maximumFractionDigits: 0 }); 
-            const totalCapitalGain = finalValue - initialInvestmentValue;
+            // --- FIX: Add isFinite checks for summary calculations ---
+            const safeFinalValue = isFinite(finalValue) ? finalValue : 0;
+            const formattedFinalValue = safeFinalValue.toLocaleString('en-US', currencyOptionsWhole);
+            
+            const safeInitialInvestmentValue = isFinite(initialInvestmentValue) ? initialInvestmentValue : 0;
+            const formattedTotalCashIn = safeInitialInvestmentValue.toLocaleString('en-US', currencyOptionsWhole); 
+            
+            const finalShares = finalData ? finalData.endingShares : initialShares;
+            const safeFinalShares = isFinite(finalShares) ? finalShares : 0;
+            const formattedTotalShares = Math.round(safeFinalShares).toLocaleString('en-US', { maximumFractionDigits: 0 }); 
+            
+            const totalCapitalGain = safeFinalValue - safeInitialInvestmentValue;
             const formattedCapitalGain = totalCapitalGain.toLocaleString('en-US', currencyOptionsWhole);
 
-            const totalNetDividendsValue = totalGrossDividendsGlobal - totalTaxesPaidGlobal;
-            const formattedTotalGrossDividends = totalGrossDividendsGlobal.toLocaleString('en-US', currencyOptionsWhole);
+            const safeTotalGrossDividendsGlobal = isFinite(totalGrossDividendsGlobal) ? totalGrossDividendsGlobal : 0;
+            const safeTotalTaxesPaidGlobal = isFinite(totalTaxesPaidGlobal) ? totalTaxesPaidGlobal : 0;
+            
+            const totalNetDividendsValue = safeTotalGrossDividendsGlobal - safeTotalTaxesPaidGlobal;
+            const formattedTotalGrossDividends = safeTotalGrossDividendsGlobal.toLocaleString('en-US', currencyOptionsWhole);
             const formattedTotalNetDividends = totalNetDividendsValue.toLocaleString('en-US', currencyOptionsWhole);
-            const formattedTotalTaxesPaid = totalTaxesPaidGlobal.toLocaleString('en-US', currencyOptionsWhole);
+            const formattedTotalTaxesPaid = safeTotalTaxesPaidGlobal.toLocaleString('en-US', currencyOptionsWhole);
             
             // Existing: Total Net Yield (Still calculated but not displayed)
-            const totalYieldPercentage = (initialInvestmentValue > 0) ? (totalNetDividendsValue / initialInvestmentValue) * 100 : 0;
-            const formattedTotalYield = totalYieldPercentage.toFixed(2) + '%';
+            const totalYieldPercentage = (safeInitialInvestmentValue > 0) ? (totalNetDividendsValue / safeInitialInvestmentValue) * 100 : 0;
+            // Removed usage of formattedTotalYield as it wasn't used
+
             
             // NEW CALCULATION: Total Percentage Gain
-            const totalPercentageGainValue = (initialInvestmentValue > 0) ? (totalCapitalGain / initialInvestmentValue) * 100 : 0;
+            const totalPercentageGainValue = (safeInitialInvestmentValue > 0) ? (totalCapitalGain / safeInitialInvestmentValue) * 100 : 0;
             const formattedTotalPercentageGain = totalPercentageGainValue.toFixed(2) + '%';
 
 
@@ -628,9 +636,8 @@
                     <thead>
                         <tr>
                             <th>Period</th>
-                            <th>Stock Price (EOP)</th> 
-                            <th>Annual Net Dividend (Yield)</th>
-                            <th>Starting Shares</th>
+                            <th>Stock Price</th> 
+                            <th>Annual Net Dividend</th> 
                             <th>Net Dividend</th>
                             <th>Shares Purchased</th>
                             <th>Ending Shares</th>
@@ -641,33 +648,40 @@
             `;
 
             aggregatedData.forEach(data => {
-                const stockPriceFormatted = data.stockPrice.toLocaleString('en-US', currencyOptionsFractional);
+                // --- FIX: Add isFinite checks before calling toLocaleString ---
+                const safeStockPrice = isFinite(data.stockPrice) ? data.stockPrice : 0;
+                const stockPriceFormatted = safeStockPrice.toLocaleString('en-US', currencyOptionsFractional);
                 
                 // Calculate Net Dividend and Net Yield
                 const netAnnualDividendPerShare = data.annualDividendPerShare * netDividendMultiplier;
-                const netAnnualDividendPerShareFormatted = netAnnualDividendPerShare.toLocaleString('en-US', currencyOptionsFractional);
+                const safeNetAnnualDividendPerShare = isFinite(netAnnualDividendPerShare) ? netAnnualDividendPerShare : 0;
+                const netAnnualDividendPerShareFormatted = safeNetAnnualDividendPerShare.toLocaleString('en-US', currencyOptionsFractional);
 
-                const netAnnualYield = data.stockPrice > 0 ? (netAnnualDividendPerShare / data.stockPrice) * 100 : 0;
+                const netAnnualYield = safeStockPrice > 0 ? (safeNetAnnualDividendPerShare / safeStockPrice) * 100 : 0;
                 
-                const grossDividendsFormatted = data.grossDividends.toLocaleString('en-US', currencyOptionsWhole);
-                const taxesPaidFormatted = data.taxesPaid.toLocaleString('en-US', currencyOptionsWhole);
-                const netDividendsFormatted = data.netDividends.toLocaleString('en-US', currencyOptionsWhole);
-                const endingValueFormatted = data.endingValue.toLocaleString('en-US', currencyOptionsWhole);
+                const safeGrossDividends = isFinite(data.grossDividends) ? data.grossDividends : 0;
+                const safeTaxesPaid = isFinite(data.taxesPaid) ? data.taxesPaid : 0;
+                const safeNetDividends = isFinite(data.netDividends) ? data.netDividends : 0;
+                const safeEndingValue = isFinite(data.endingValue) ? data.endingValue : 0;
+                const safeSharesPurchased = isFinite(data.sharesPurchased) ? data.sharesPurchased : 0;
+                const safeEndingShares = isFinite(data.endingShares) ? data.endingShares : 0;
 
-                // We round the shares for display in the table, but the underlying 'data' object holds the accurate float.
-                const startingSharesFormatted = Math.round(data.startingShares).toLocaleString('en-US', { maximumFractionDigits: 0 });
-                const sharesPurchasedFormatted = Math.round(data.sharesPurchased).toLocaleString('en-US', { maximumFractionDigits: 0 });
-                const endingSharesFormatted = Math.round(data.endingShares).toLocaleString('en-US', { maximumFractionDigits: 0 });
+                const grossDividendsFormatted = safeGrossDividends.toLocaleString('en-US', currencyOptionsWhole);
+                const taxesPaidFormatted = safeTaxesPaid.toLocaleString('en-US', currencyOptionsWhole);
+                const netDividendsFormatted = safeNetDividends.toLocaleString('en-US', currencyOptionsWhole);
+                const endingValueFormatted = safeEndingValue.toLocaleString('en-US', currencyOptionsWhole);
+
+                // Share counts are rounded and formatted
+                const sharesPurchasedFormatted = Math.round(safeSharesPurchased).toLocaleString('en-US', { maximumFractionDigits: 0 });
+                const endingSharesFormatted = Math.round(safeEndingShares).toLocaleString('en-US', { maximumFractionDigits: 0 });
 
                 tableHTML += `
                     <tr>
                         <td>${data.label}</td>
                         <td>${stockPriceFormatted}</td>
-                        <td class="dividend-cell">
-                            <strong>${netAnnualDividendPerShareFormatted}</strong><br>
-                            (${netAnnualYield.toFixed(2)}%)
+                        <td>
+                            <strong>${netAnnualDividendPerShareFormatted}</strong> (${netAnnualYield.toFixed(2)}%)
                         </td>
-                        <td>${startingSharesFormatted}</td>
                         <td>${netDividendsFormatted}</td> 
                         <td>${sharesPurchasedFormatted}</td>
                         <td>${endingSharesFormatted}</td>
