@@ -263,7 +263,7 @@
         .results-table td {
             text-align: center; 
             padding: 6px 6px; 
-            font-size: 0.85rem; 
+            font-size: 0.95rem; /* Increased size for data */
             vertical-align: middle;
             border-right: none; 
             border-bottom: 1px solid #e2e8f0; 
@@ -271,7 +271,7 @@
         
         /* Adjusted font size for body data */
         .results-table tbody td {
-            font-size: 0.8rem; 
+            font-size: 0.95rem; /* Increased size for body data visibility */
         }
 
         .results-table th {
@@ -713,7 +713,6 @@
                     
                 </div>
                 <hr>
-                <p><strong>Breakdown View: ${breakdownView.charAt(0).toUpperCase() + breakdownView.slice(1)}</strong></p>
                 ${tableHTML}
             `;
         }
