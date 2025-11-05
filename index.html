@@ -354,28 +354,28 @@
                 
                 <div class="input-group">
                     <label for="initialShares">Initial Shares</label>
-                    <input type="number" id="initialShares" value="10000" min="0" required>
+                    <input type="number" id="initialShares" value="10000" min="0" step="any" required>
                 </div>
                 
                 <div class="input-group">
                     <label for="stockPrice">Current Stock Price</label>
-                    <input type="number" id="stockPrice" value="5" min="0.01" required>
+                    <input type="number" id="stockPrice" value="5" min="0.01" step="any" required>
                 </div>
                 
                 <div class="input-group">
                     <label for="stockPriceGrowth">Stock Price Growth Rate</label>
-                    <input type="number" id="stockPriceGrowth" value="5" min="0" required>
+                    <input type="number" id="stockPriceGrowth" value="5" min="0" step="any" required>
                 </div>
                 
-                <!-- MOVED: Monthly Contribution field here -->
+                <!-- Monthly Contribution field -->
                 <div class="input-group">
                     <label for="monthlyContribution">Monthly Contribution</label>
-                    <input type="number" id="monthlyContribution" value="100" min="0" required>
+                    <input type="number" id="monthlyContribution" value="100" min="0" step="any" required>
                 </div>
 
                 <div class="input-group">
                     <label for="years">Years to Project</label>
-                    <input type="number" id="years" value="5" min="1" required>
+                    <input type="number" id="years" value="5" min="1" step="any" required>
                 </div>
                 
             </div>
@@ -386,7 +386,7 @@
 
                 <div class="input-group">
                     <label for="dividendAmount">Dividend Payout</label>
-                    <input type="number" id="dividendAmount" value="0.09" min="0" required>
+                    <input type="number" id="dividendAmount" value="0.09" min="0" step="any" required>
                 </div>
 
                 <div class="input-group">
@@ -400,12 +400,12 @@
                 
                 <div class="input-group">
                     <label for="dividendGrowth">Dividend Growth Rate</label>
-                    <input type="number" id="dividendGrowth" value="3" min="0" required>
+                    <input type="number" id="dividendGrowth" value="3" min="0" step="any" required>
                 </div>
                 
                 <div class="input-group">
                     <label for="dividendTaxRate">Dividend Tax</label>
-                    <input type="number" id="dividendTaxRate" value="25" min="0" max="100" required>
+                    <input type="number" id="dividendTaxRate" value="25" min="0" max="100" step="any" required>
                 </div>
                 
                 <div class="input-group">
