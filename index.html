@@ -337,6 +337,11 @@
                 </div>
                 
                 <div class="input-group">
+                    <label for="monthlyContribution">Monthly Contribution</label>
+                    <input type="number" id="monthlyContribution" value="100" min="0" required>
+                </div>
+
+                <div class="input-group">
                     <label for="stockPrice">Current Stock Price</label>
                     <input type="number" id="stockPrice" value="5" min="0.01" required>
                 </div>
@@ -358,6 +363,7 @@
                 <div class="column-header">Dividend & Reinvestment Settings</div>
 
                 <div class="input-group">
+                    <!-- CHANGED: Removed " (per period)" -->
                     <label for="dividendAmount">Dividend Payout</label>
                     <input type="number" id="dividendAmount" value="0.09" min="0" required>
                 </div>
@@ -421,6 +427,7 @@
     <script>
         function calculateDRIP() {
             const initialShares = parseFloat(document.getElementById('initialShares').value);
+            const monthlyContribution = parseFloat(document.getElementById('monthlyContribution').value) || 0; 
             const initialStockPrice = parseFloat(document.getElementById('stockPrice').value);
             const stockPriceGrowthRate = parseFloat(document.getElementById('stockPriceGrowth').value) / 100;
             const dividendAmount = parseFloat(document.getElementById('dividendAmount').value);
@@ -430,10 +437,11 @@
             const dividendTaxRate = parseFloat(document.getElementById('dividendTaxRate').value) / 100;
             
             const dripEnabled = document.getElementById('dripEnabled').value === 'true'; 
-            
             const breakdownView = document.getElementById('breakdownView').value;
             
-            if (isNaN(initialShares) || isNaN(initialStockPrice) || isNaN(dividendAmount) || isNaN(annualGrowthRate) || isNaN(stockPriceGrowthRate) || isNaN(frequency) || isNaN(years) || isNaN(dividendTaxRate) || initialShares < 0 || initialStockPrice <= 0 || years <= 0 || dividendTaxRate < 0 || dividendTaxRate > 1) {
+            // Comprehensive validation check
+            if (isNaN(initialShares) || isNaN(initialStockPrice) || isNaN(dividendAmount) || isNaN(annualGrowthRate) || isNaN(stockPriceGrowthRate) || isNaN(frequency) || isNaN(years) || isNaN(dividendTaxRate) || isNaN(monthlyContribution) ||
+                initialShares < 0 || initialStockPrice <= 0 || years <= 0 || dividendTaxRate < 0 || dividendTaxRate > 1 || monthlyContribution < 0) {
                 const resultsDiv = document.getElementById('results');
                 resultsDiv.style.display = 'block';
                 resultsDiv.innerHTML = `<p style="color: #c53030; font-weight: bold;">Please enter valid non-negative numbers for all fields. Stock Price must be positive. Tax Rate must be between 0 and 100%.</p>`;
@@ -444,11 +452,14 @@
             const totalWeeks = years * WEEKS_PER_YEAR;
             const netDividendMultiplier = 1 - dividendTaxRate;
 
+            // Calculate weekly contribution (approximated: Monthly * 12 / 52)
+            const weeklyContribution = (monthlyContribution * 12) / WEEKS_PER_YEAR; 
+
             // Calculate weekly compounding rates
             const weeklyStockGrowthRate = Math.pow((1 + stockPriceGrowthRate), (1 / WEEKS_PER_YEAR)) - 1;
             const weeklyDividendGrowthRate = Math.pow((1 + annualGrowthRate), (1 / WEEKS_PER_YEAR)) - 1;
             
-            // Calculate the non-integer interval for dividend payments (e.g., 52/12 = 4.333... weeks)
+            // Calculate the non-integer interval for dividend payments
             const dividendIntervalWeeks = WEEKS_PER_YEAR / frequency;
 
             let sharesOwned = initialShares;
@@ -460,9 +471,10 @@
             let totalGrossDividendsGlobal = 0; 
             let totalTaxesPaidGlobal = 0; 
             
+            // Track total cash contributed (Initial Value + Monthly Contributions)
+            let totalCashContributed = initialShares * initialStockPrice;
+
             let yearTracker = 1;
-            
-            // FIX: Set the initial payout target to Week 1. This ensures the first payment is captured immediately.
             let nextPayoutWeekIndex = 1; 
             
             for (let w = 1; w <= totalWeeks; w++) {
@@ -478,7 +490,16 @@
                 let taxPaidThisWeek = 0; 
                 let netDividendsAvailableThisWeek = 0; 
                 
-                // FIXED LOGIC: Check if the current week (w) has reached or passed the theoretical next payout time.
+                // --- Handle Weekly Contribution (Buying Shares) ---
+                if (weeklyContribution > 0) {
+                    const contributionShares = weeklyContribution / currentStockPrice;
+                    sharesOwned += contributionShares;
+                    sharesBoughtThisWeek += contributionShares; 
+                    totalCashContributed += weeklyContribution;
+                }
+                // --- END Contribution ---
+
+                // Check for dividend payout
                 if (w >= nextPayoutWeekIndex) {
                     
                     const dividendPerShare = currentAnnualDividendPerShare / frequency;
@@ -492,12 +513,12 @@
                     totalTaxesPaidGlobal += taxPaidThisWeek;
 
                     if (dripEnabled) {
-                        sharesBoughtThisWeek = netDividendsAvailableThisWeek / currentStockPrice; 
-                        sharesOwned += sharesBoughtThisWeek;
+                        const dripSharesBought = netDividendsAvailableThisWeek / currentStockPrice; 
+                        sharesOwned += dripSharesBought;
+                        sharesBoughtThisWeek += dripSharesBought; // Shares bought now includes DRIP
                     }
                     
-                    // Advance the index by the exact interval. 
-                    // This maintains the correct frequency (e.g., exactly 12 times a year).
+                    // Advance the index by the exact interval.
                     nextPayoutWeekIndex += dividendIntervalWeeks;
                 }
                 
@@ -548,7 +569,6 @@
                 cumulativeSharesBought += weekData.sharesPurchased;
                 currentGroupingIndex++;
 
-                // Check if the current report period is complete or if we are at the end of the simulation
                 if (currentGroupingIndex === reportInterval || i === allWeeklyData.length - 1) {
                     
                     const endingShares = weekData.endingShares;
@@ -559,10 +579,8 @@
                     if (breakdownView === 'year') {
                         label = `Year ${weekData.year}`;
                     } else if (breakdownView === 'month') {
-                        // Calculate the logical month number for the report
                         const totalMonths = Math.min(Math.floor((i / WEEKS_PER_YEAR) * 12) + 1, years * 12);
                         const yearOfReport = Math.floor(i / WEEKS_PER_YEAR) + 1;
-                        // Use modulo 12 to get the month within the year, but ensure month 12 is correct
                         const monthInYear = (totalMonths % 12) === 0 ? 12 : (totalMonths % 12); 
                         label = `Y${yearOfReport} M${monthInYear}`; 
                     } else {
@@ -591,43 +609,36 @@
                 }
             }
 
-            const initialInvestmentValue = initialShares * initialStockPrice;
             const finalData = aggregatedData[aggregatedData.length - 1];
-            const finalValue = finalData ? finalData.endingValue : initialInvestmentValue;
+            const finalValue = finalData ? finalData.endingValue : totalCashContributed;
             
             const currencyOptionsWhole = { style: 'currency', currency: 'USD', minimumFractionDigits: 0, maximumFractionDigits: 0 };
             const currencyOptionsFractional = { style: 'currency', currency: 'USD', minimumFractionDigits: 2, maximumFractionDigits: 2 };
 
-
-            // --- FIX: Add isFinite checks for summary calculations ---
+            // --- Summary Calculations Update ---
             const safeFinalValue = isFinite(finalValue) ? finalValue : 0;
             const formattedFinalValue = safeFinalValue.toLocaleString('en-US', currencyOptionsWhole);
             
-            const safeInitialInvestmentValue = isFinite(initialInvestmentValue) ? initialInvestmentValue : 0;
-            const formattedTotalCashIn = safeInitialInvestmentValue.toLocaleString('en-US', currencyOptionsWhole); 
+            // Use the new totalCashContributed variable
+            const safeTotalCashContributed = isFinite(totalCashContributed) ? totalCashContributed : 0;
+            const formattedTotalCashIn = safeTotalCashContributed.toLocaleString('en-US', currencyOptionsWhole); 
             
             const finalShares = finalData ? finalData.endingShares : initialShares;
             const safeFinalShares = isFinite(finalShares) ? finalShares : 0;
             const formattedTotalShares = Math.round(safeFinalShares).toLocaleString('en-US', { maximumFractionDigits: 0 }); 
             
-            const totalCapitalGain = safeFinalValue - safeInitialInvestmentValue;
+            // Capital Gain is Final Value minus Total Cash Contributed
+            const totalCapitalGain = safeFinalValue - safeTotalCashContributed; 
             const formattedCapitalGain = totalCapitalGain.toLocaleString('en-US', currencyOptionsWhole);
 
             const safeTotalGrossDividendsGlobal = isFinite(totalGrossDividendsGlobal) ? totalGrossDividendsGlobal : 0;
             const safeTotalTaxesPaidGlobal = isFinite(totalTaxesPaidGlobal) ? totalTaxesPaidGlobal : 0;
             
             const totalNetDividendsValue = safeTotalGrossDividendsGlobal - safeTotalTaxesPaidGlobal;
-            const formattedTotalGrossDividends = safeTotalGrossDividendsGlobal.toLocaleString('en-US', currencyOptionsWhole);
             const formattedTotalNetDividends = totalNetDividendsValue.toLocaleString('en-US', currencyOptionsWhole);
-            const formattedTotalTaxesPaid = safeTotalTaxesPaidGlobal.toLocaleString('en-US', currencyOptionsWhole);
             
-            // Existing: Total Net Yield (Still calculated but not displayed)
-            const totalYieldPercentage = (safeInitialInvestmentValue > 0) ? (totalNetDividendsValue / safeInitialInvestmentValue) * 100 : 0;
-            // Removed usage of formattedTotalYield as it wasn't used
-
-            
-            // NEW CALCULATION: Total Percentage Gain
-            const totalPercentageGainValue = (safeInitialInvestmentValue > 0) ? (totalCapitalGain / safeInitialInvestmentValue) * 100 : 0;
+            // Total Percentage Gain is Capital Gain / Total Cash Contributed
+            const totalPercentageGainValue = (safeTotalCashContributed > 0) ? (totalCapitalGain / safeTotalCashContributed) * 100 : 0;
             const formattedTotalPercentageGain = totalPercentageGainValue.toFixed(2) + '%';
 
 
@@ -648,7 +659,6 @@
             `;
 
             aggregatedData.forEach(data => {
-                // --- FIX: Add isFinite checks before calling toLocaleString ---
                 const safeStockPrice = isFinite(data.stockPrice) ? data.stockPrice : 0;
                 const stockPriceFormatted = safeStockPrice.toLocaleString('en-US', currencyOptionsFractional);
                 
@@ -659,19 +669,14 @@
 
                 const netAnnualYield = safeStockPrice > 0 ? (safeNetAnnualDividendPerShare / safeStockPrice) * 100 : 0;
                 
-                const safeGrossDividends = isFinite(data.grossDividends) ? data.grossDividends : 0;
-                const safeTaxesPaid = isFinite(data.taxesPaid) ? data.taxesPaid : 0;
                 const safeNetDividends = isFinite(data.netDividends) ? data.netDividends : 0;
                 const safeEndingValue = isFinite(data.endingValue) ? data.endingValue : 0;
                 const safeSharesPurchased = isFinite(data.sharesPurchased) ? data.sharesPurchased : 0;
                 const safeEndingShares = isFinite(data.endingShares) ? data.endingShares : 0;
 
-                const grossDividendsFormatted = safeGrossDividends.toLocaleString('en-US', currencyOptionsWhole);
-                const taxesPaidFormatted = safeTaxesPaid.toLocaleString('en-US', currencyOptionsWhole);
                 const netDividendsFormatted = safeNetDividends.toLocaleString('en-US', currencyOptionsWhole);
                 const endingValueFormatted = safeEndingValue.toLocaleString('en-US', currencyOptionsWhole);
 
-                // Share counts are rounded and formatted
                 const sharesPurchasedFormatted = Math.round(safeSharesPurchased).toLocaleString('en-US', { maximumFractionDigits: 0 });
                 const endingSharesFormatted = Math.round(safeEndingShares).toLocaleString('en-US', { maximumFractionDigits: 0 });
 
@@ -700,7 +705,7 @@
             resultsDiv.innerHTML = `
                 <div class="summary-container">
                     <div class="summary-box">
-                        <strong>Initial Investment</strong>
+                        <strong>Total Cash Contributed</strong>
                         <span>${formattedTotalCashIn}</span>
                     </div>
                     <div class="summary-box">
