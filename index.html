@@ -146,9 +146,15 @@
             }
         }
         
-        /* --- Button Styling (Updated Color) --- */
+        /* --- Button Group and Styling --- */
+        .button-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 10px;
+        }
+
         button {
-            width: 100%;
+            width: 100%; /* Make single button full width */
             padding: 12px;
             background-color: #10b981; /* VIBRANT GREEN */
             color: white;
@@ -159,9 +165,11 @@
             font-weight: 700;
             transition: background-color 0.2s, transform 0.1s;
         }
-        button:hover {
+        
+        #calculateButton:hover {
             background-color: #059669; /* Darker green on hover */
         }
+        
         button:active {
             transform: translateY(1px);
         }
@@ -337,11 +345,6 @@
                 </div>
                 
                 <div class="input-group">
-                    <label for="monthlyContribution">Monthly Contribution</label>
-                    <input type="number" id="monthlyContribution" value="100" min="0" required>
-                </div>
-
-                <div class="input-group">
                     <label for="stockPrice">Current Stock Price</label>
                     <input type="number" id="stockPrice" value="5" min="0.01" required>
                 </div>
@@ -351,6 +354,12 @@
                     <input type="number" id="stockPriceGrowth" value="5" min="0" required>
                 </div>
                 
+                <!-- MOVED: Monthly Contribution field here -->
+                <div class="input-group">
+                    <label for="monthlyContribution">Monthly Contribution</label>
+                    <input type="number" id="monthlyContribution" value="100" min="0" required>
+                </div>
+
                 <div class="input-group">
                     <label for="years">Years to Project</label>
                     <input type="number" id="years" value="5" min="1" required>
@@ -363,7 +372,6 @@
                 <div class="column-header">Dividend & Reinvestment Settings</div>
 
                 <div class="input-group">
-                    <!-- CHANGED: Removed " (per period)" -->
                     <label for="dividendAmount">Dividend Payout</label>
                     <input type="number" id="dividendAmount" value="0.09" min="0" required>
                 </div>
@@ -412,7 +420,9 @@
             </div>
         </div>
         
-        <button onclick="calculateDRIP()">Calculate</button>
+        <div class="button-group">
+            <button id="calculateButton" onclick="calculateDRIP()">Calculate</button>
+        </div>
 
         <div id="results">
             <!-- Results will be displayed here --></div>
@@ -425,6 +435,10 @@
     </footer>
 
     <script>
+        
+        /**
+         * Performs the main DRIP calculation.
+         */
         function calculateDRIP() {
             const initialShares = parseFloat(document.getElementById('initialShares').value);
             const monthlyContribution = parseFloat(document.getElementById('monthlyContribution').value) || 0; 
@@ -438,15 +452,17 @@
             
             const dripEnabled = document.getElementById('dripEnabled').value === 'true'; 
             const breakdownView = document.getElementById('breakdownView').value;
+
+            const resultsDiv = document.getElementById('results');
             
             // Comprehensive validation check
             if (isNaN(initialShares) || isNaN(initialStockPrice) || isNaN(dividendAmount) || isNaN(annualGrowthRate) || isNaN(stockPriceGrowthRate) || isNaN(frequency) || isNaN(years) || isNaN(dividendTaxRate) || isNaN(monthlyContribution) ||
                 initialShares < 0 || initialStockPrice <= 0 || years <= 0 || dividendTaxRate < 0 || dividendTaxRate > 1 || monthlyContribution < 0) {
-                const resultsDiv = document.getElementById('results');
                 resultsDiv.style.display = 'block';
                 resultsDiv.innerHTML = `<p style="color: #c53030; font-weight: bold;">Please enter valid non-negative numbers for all fields. Stock Price must be positive. Tax Rate must be between 0 and 100%.</p>`;
-                return;
+                return false;
             }
+
 
             const WEEKS_PER_YEAR = 52;
             const totalWeeks = years * WEEKS_PER_YEAR;
@@ -700,7 +716,6 @@
                 </table>
             `;
 
-            const resultsDiv = document.getElementById('results');
             resultsDiv.style.display = 'block';
             resultsDiv.innerHTML = `
                 <div class="summary-container">
@@ -734,7 +749,9 @@
                 <hr>
                 ${tableHTML}
             `;
+            return true;
         }
+        
     </script>
 </body>
 </html>
